@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate PDF</title>
+    <!-- Include html2canvas and jsPDF libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- Form for replacing customizable text and selecting a template -->
+<form id="textForm">
+    <label for="templateSelect">Select Template:</label>
+    <select id="templateSelect" name="templateSelect">
+        <option value="template1.svg">Template 1</option>
+        <option value="template2.svg">Template 2</option>
+        <option value="atelier_salon.svg">Atelier Salon</option>
+        <!-- Add more options as needed -->
+    </select>
+
+    <!-- Fields for customizable text -->
+    <div id="dynamicFields"></div>
+
+    <button type="button" onclick="previewSVG()">Aperçu</button>
+    <button type="button" onclick="generatePDF()">Generate PDF</button>
+</form>
+
+<!-- Container to display SVG preview -->
+<div id="svgPreviewContainer"></div>
+
+<script>
+    // Object to store template paths and corresponding text values
+    const templateTextValues = {
+        'template1.svg': {
+            customText1: 'Default Custom Text 1',
+            customText2: 'Default Custom Text 2',
+            customText3: 'Default Custom Text 3',
+        },
+        'template2.svg': {
+            customText1: 'Default Custom Text 1',
+            customText2: 'Default Custom Text 2',
+            customText3: 'Default Custom Text 3',
+        },
+        'atelier_salon.svg': {
+            titre_atelier: 'Default Titre Atelier',
+            sous_titre: 'Default Sous Titre',
+            description: 'Default Description',
+        },
+        // Add more template-text pairs as needed
+    };
+
+    // Function to generate dynamic fields based on template
+    function generateDynamicFields(selectedTemplate) {
+        const dynamicFieldsDiv = document.getElementById('dynamicFields');
+        dynamicFieldsDiv.innerHTML = ''; // Clear previous fields
+
+        const templateKeys = Object.keys(templateTextValues[selectedTemplate]);
+
+        templateKeys.forEach(key => {
+            const label = document.createElement('label');
+            label.textContent = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = key;
+            input.value = templateTextValues[selectedTemplate][key];
+
+            dynamicFieldsDiv.appendChild(label);
+            dynamicFieldsDiv.appendChild(input);
+        });
+    }
+
+    // Function to preview SVG with modified text
+    function previewSVG() {
+        const form = document.getElementById('textForm');
+        const selectedTemplate = form.elements['templateSelect'].value;
+        const svgPath = `templates/${selectedTemplate}`;
+
+        // Update text values in the object based on the form input
+        const templateKeys = Object.keys(templateTextValues[selectedTemplate]);
+        templateKeys.forEach(key => {
+            templateTextValues[selectedTemplate][key] = form.elements[key].value;
+        });
+
+        // Fetch the SVG template
+        fetch(svgPath)
+            .then(response => response.text())
+            .then(svgData => {
+                // Replace specific text placeholders with the text from the form
+                let customizedSVG = svgData;
+                templateKeys.forEach(key => {
+                    const regex = new RegExp(`\\[text:${key}\\]`, 'g');
+                    customizedSVG = customizedSVG.replace(regex, templateTextValues[selectedTemplate][key]);
+                });
+
+                // Display the customized SVG in the preview container
+                document.getElementById('svgPreviewContainer').innerHTML = customizedSVG;
+            });
+    }
+
+    // Function to generate PDF
+    function generatePDF() {
+        const form = document.getElementById('textForm');
+        const selectedTemplate = form.elements['templateSelect'].value;
+        const svgPath = `templates/${selectedTemplate}`;
+
+        // Update text values in the object based on the form input
+        const templateKeys = Object.keys(templateTextValues[selectedTemplate]);
+        templateKeys.forEach(key => {
+            templateTextValues[selectedTemplate][key] = form.elements[key].value;
+        });
+
+        // Fetch the SVG template
+        fetch(svgPath)
+            .then(response => response.text())
+            .then(svgData => {
+                // Replace specific text placeholders with the text from the form
+                const customizedSVG = svgData;
+                templateKeys.forEach(key => {
+                    const regex = new RegExp(`\\[text:${key}\\]`, 'g');
+                    customizedSVG = customizedSVG.replace(regex, templateTextValues[selectedTemplate][key]);
+                });
+
+                const svgContainer = document.createElement('div');
+                svgContainer.innerHTML = customizedSVG;
+
+                html2canvas(svgContainer)
+                    .then(canvas => {
+                        const pdf = new jsPDF();
+                        const imgData = canvas.toDataURL('image/png');
+
+                        pdf.addImage(imgData, 'PNG', 10, 10, 190, 277);
+                        pdf.save('generated_poster.pdf');
+                    });
+            });
+    }
+
+    // Update dynamic fields when template changes
+    document.getElementById('templateSelect').addEventListener('change', function () {
+        const selectedTemplate = this.value;
+        generateDynamicFields(selectedTemplate);
+        previewSVG(); // Preview SVG when template changes
+    });
+
+    // Initialize dynamic fields based on default template
+    generateDynamicFields('atelier_salon.svg');
+</script>
+
+</body>
+</html>
