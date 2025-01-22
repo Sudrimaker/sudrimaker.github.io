@@ -136,6 +136,13 @@ function openNav() {
 	document.getElementById("sidepanel").style.width = "250px";
   }
   
-  function closeNav() {
+function closeNav() {
 	document.getElementById("sidepanel").style.width = "0";
   }
+function toggleNav() {
+	if(document.getElementById("sidepanel").style.width == "250px"){
+		closeNav();
+	}else{
+		openNav();
+	}
+}
