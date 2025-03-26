@@ -263,10 +263,14 @@ html {
 
 body {
 	background: rgb(217, 138, 71);
-	background: -moz-linear-gradient(45deg, rgba(217, 138, 71, 1) 46%, rgba(46, 144, 157, 1) 73%, rgba(241, 231, 171, 1) 100%);
-	background: -webkit-linear-gradient(45deg, rgba(217, 138, 71, 1) 46%, rgba(46, 144, 157, 1) 73%, rgba(241, 231, 171, 1) 100%);
-	background: linear-gradient(45deg, rgba(217, 138, 71, 1) 46%, rgba(46, 144, 157, 1) 73%, rgba(241, 231, 171, 1) 100%);
+	background: -moz-linear-gradient(45deg, rgba(217, 138, 71, 1) 30%, rgba(46, 144, 157, 1) 73%, rgba(241, 231, 171, 1) 100%);
+	background: -webkit-linear-gradient(45deg, rgba(217, 138, 71, 1)30%, rgba(46, 144, 157, 1) 73%, rgba(241, 231, 171, 1) 100%);
+	background: linear-gradient(45deg, rgba(217, 138, 71, 1) 30%, rgba(46, 144, 157, 1) 73%, rgba(241, 231, 171, 1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d98a47", endColorstr="#f1e7ab", GradientType=1);
+	background-size: cover;
+	background-attachment: fixed;
+	height: 100vh;
+	margin: 0;
 }
 
 body.is-preload *,
