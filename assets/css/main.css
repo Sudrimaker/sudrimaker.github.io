@@ -188,6 +188,16 @@ textarea {
 	bottom: -10vh;
 }
 
+#networks header.major {
+    text-align: center; /* Centre le texte "Suivez-nous sur Instagram !" */
+}
+
+#networks .instagram-media {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+}
+
 #menu {
 	transition: all 2s;
 	transform: translate(11vh, 11vh);
